@@ -1,0 +1,15 @@
+TrendStream
+
+Requires:
+python 2.5 or greater
+python-simplejson
+Tk
+
+Usage:
+python ./trendstream.py
+
+TrendStream connects to Twitter, gets a list of trending topics, then opens a
+stream on Twitter's Track resource, which means all (or sometimes, a subset of)
+all the tweets containing a trending topic are sent to TrendStream.
+
+Each tweet is then displayed on a scrolling history.
