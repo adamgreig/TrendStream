@@ -2,6 +2,7 @@
 # TrendStream GUI
 # Adam Greig, July 2009
 
+import time
 import Queue
 import Tkinter
 
@@ -88,18 +89,21 @@ class GUI:
     
     def add_streaming_message(self, message, posx=5):
         self.move_stream(60)
-        text = self.canvas.create_text(5, 100, text=message, width=350,
+        text = self.canvas.create_text(80, 100, text=message, width=350,
             fill="green", font=("Courier", 10), anchor=Tkinter.NW)
-        streaming_message = StreamingMessage(self.canvas, text, 5, 100)
+        streaming_message = StreamingMessage(self.canvas, text, 80, 100)
         self.streaming_messages.append(streaming_message)
     
     def move_stream(self, amount=1):
-        '''Move all stream messages down a pixel'''
-        for message in self.streaming_messages:
-            message.move_down(amount)
-            if message.posy > 768:
-                self.canvas.delete(message.text)
-                self.streaming_messages.remove(message)
+        '''Move all stream messages down'''
+        for x in range(amount/5):
+            for message in self.streaming_messages:
+                message.move_down(5)
+                if message.posy > 768:
+                    self.canvas.delete(message.text)
+                    self.streaming_messages.remove(message)
+            time.sleep(0.005)
+            self.root.update()
     
     def move_stream_callback(self, amount=1):
         self.move_stream(amount)
