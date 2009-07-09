@@ -82,7 +82,7 @@ class GUI:
             anchor=Tkinter.NW)
         self.streaming_messages = []
         #self.root.after(100, self.move_stream_callback, 1)
-        self.root.after_idle(self.check_twitter)
+        self.root.after(100, self.check_twitter)
     
     def add_streaming_message(self, message, posx=5):
         self.move_stream(60)
@@ -104,12 +104,8 @@ class GUI:
         self.root.after(100, self.move_stream_callback, amount)
     
     def check_twitter(self):
-        try:
+        while not self.twitter.tweets.empty():
             tweet = self.twitter.tweets.get(False)
-        except Queue.Empty:
-            pass
-        else:
             text = tweet['user']['screen_name'] + ': ' + tweet['text']
             self.add_streaming_message(text)
-        finally:
-            self.root.after_idle(self.check_twitter)
+        self.root.after(100, self.check_twitter)
