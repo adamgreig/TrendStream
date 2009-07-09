@@ -25,7 +25,8 @@ class Twitter:
     
     def open_socket(self, username, password):
         '''Open a streaming socket to Twitter'''
-        post_data = urllib.urlencode([('track', ','.join(self.trends))])
+        trends_string = ','.join(self.trends).encode('utf-8')
+        post_data = urllib.urlencode([('track', trends_string)])
         auth_str = base64.b64encode(username + ":" + password)
         
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
