@@ -61,9 +61,11 @@ class GUI:
         username = self.username_entry.get()
         password = self.password_entry.get()
         self.auth_frame.destroy()
-        with self.twitter.sock_cond:
-            self.twitter.open_socket(username, password)
-            self.twitter.sock_cond.notify()
+        
+        self.twitter.sock_cond.acquire()
+        self.twitter.open_socket(username, password)
+        self.twitter.sock_cond.notify()
+        self.twitter.sock_cond.release()
         
         trend_string = "Trending Topics: "
         for trend in self.twitter.trends:

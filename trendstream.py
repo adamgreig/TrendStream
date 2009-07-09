@@ -25,8 +25,9 @@ class TwitterThread(threading.Thread):
         threading.Thread.__init__(self)
     
     def run(self):
-        with self.twitter.sock_cond:
-            twitter.sock_cond.wait()
+        self.twitter.sock_cond.acquire()
+        twitter.sock_cond.wait()
+        self.twitter.sock_cond.release()
         while 1:
             self.twitter.get_tweets()
 
