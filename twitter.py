@@ -28,6 +28,20 @@ class Twitter:
             for trend in json['trends']:
                 self.trends.append(trend['name'])
     
+    def check_credentials(self, username, password):
+        auth_handler = urllib2.HTTPBasicAuthHandler()
+        auth_handler.add_password('Twitter API', 'http://twitter.com/',
+            username, password)
+        opener = urllib2.build_opener(auth_handler)
+        api_url = 'http://twitter.com/account/verify_credentials.json'
+        try:
+            f = opener.open(api_url)
+        except urllib2.HTTPError, e:
+            return False
+        else:
+            return True
+        
+    
     def open_socket(self, username, password):
         '''Open a streaming socket to Twitter'''
         trends_string = ','.join(self.trends).encode('utf-8')

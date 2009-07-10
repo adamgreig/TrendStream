@@ -46,7 +46,7 @@ class GUI:
         self.root.resizable(0, 0)
         self.twitter = twitter
     
-    def ask_auth(self):
+    def ask_auth(self, error=''):
         '''Display a frame asking for a username and password'''
         self.auth_frame = Tkinter.Frame(self.root)
         
@@ -58,6 +58,10 @@ class GUI:
         self.password_entry = Tkinter.Entry(self.auth_frame, show="*")
         self.login_button = Tkinter.Button(self.auth_frame, text="Login",
             command=self.process_auth)
+        if error != '':
+            self.error_msg = Tkinter.Label(self.auth_frame, text=error,
+                fg = "red")
+            self.error_msg.grid(row=4, columnspan=2, sticky=Tkinter.N)
         
         self.auth_label.grid(row=0, column=0, columnspan=2, sticky=Tkinter.W)
         self.username_label.grid(row=1, column=0, sticky=Tkinter.W)
@@ -80,17 +84,20 @@ class GUI:
         password = self.password_entry.get()
         self.auth_frame.destroy()
         
-        self.twitter.sock_cond.acquire()
-        self.twitter.open_socket(username, password)
-        self.twitter.sock_cond.notify()
-        self.twitter.sock_cond.release()
-        
-        trend_string = "Trending Topics: "
-        for trend in self.twitter.trends:
-            trend_string += "%s, " % trend
-        trend_string = trend_string[:-2]
-        
-        self.setup_canvas(trend_string)
+        if self.twitter.check_credentials(username, password):
+            self.twitter.sock_cond.acquire()
+            self.twitter.open_socket(username, password)
+            self.twitter.sock_cond.notify()
+            self.twitter.sock_cond.release()
+            
+            trend_string = "Trending Topics: "
+            for trend in self.twitter.trends:
+                trend_string += "%s, " % trend
+            trend_string = trend_string[:-2]
+            
+            self.setup_canvas(trend_string)
+        else:
+            self.ask_auth('Error logging in. Please retry.')
     
     def setup_canvas(self, title):
         '''Set up the canvas widgets'''
