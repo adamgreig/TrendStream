@@ -101,8 +101,8 @@ class GUI:
             width=500, fill="white", font=("Courier", 12, "bold"),
             anchor=Tkinter.NW)
         self.streaming_messages = []
-        #self.root.after(100, self.move_stream_callback, 1)
         self.root.after(100, self.check_twitter)
+        self.root.bind('q', lambda event: self.root.quit())
     
     def add_streaming_message(self, message, posx=5):
         self.move_stream(60)
