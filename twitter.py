@@ -17,11 +17,16 @@ class Twitter:
     
     def get_trends(self):
         '''Fetch the current trends from Twitter'''
-        f = urllib2.urlopen("http://search.twitter.com/trends.json")
-        json = simplejson.loads(f.read())
-        self.trends = []
-        for trend in json['trends']:
-            self.trends.append(trend['name'])
+        try:
+            f = urllib2.urlopen("http://search.twitter.com/trends.json")
+            json = simplejson.loads(f.read())
+        except (ValueError, urllib2.URLError, TypeError):
+            print "Error getting current Twitter trends, retrying..."
+            self.get_trends()
+        else:
+            self.trends = []
+            for trend in json['trends']:
+                self.trends.append(trend['name'])
     
     def open_socket(self, username, password):
         '''Open a streaming socket to Twitter'''

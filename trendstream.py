@@ -22,6 +22,7 @@ class GUIThread(threading.Thread):
 class TwitterThread(threading.Thread):
     def __init__(self, twitter):
         self.twitter = twitter
+        self.twitter.get_trends()
         threading.Thread.__init__(self)
     
     def run(self):
@@ -33,7 +34,6 @@ class TwitterThread(threading.Thread):
 
 if __name__ == '__main__':
     twitter = twitter.Twitter()
-    twitter.get_trends()
     
     twitter_thread = TwitterThread(twitter)
     gui_thread = GUIThread(twitter)
