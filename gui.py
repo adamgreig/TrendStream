@@ -19,6 +19,23 @@ class StreamingMessage:
     def move_down(self, distance=1):
         self.posy += distance
         self.update()
+    
+    def __check_colour(self, colour):
+        if type(colour) == type(1) or type(colour) == type(1.0):
+            if colour < 0: colour = 0
+            if colour > 255: colour = 255
+            return colour
+        else:
+            return 0
+    
+    def set_colour(self, red, green, blue):
+        '''Set the message colour out of 255'''
+        red = self.__check_colour(red)
+        green = self.__check_colour(green)
+        blue = self.__check_colour(blue)
+        self.canvas.itemconfigure(self.text, 
+            fill="#%02x%02x%02x" % (red, green, blue))
+        self.update()
 
 class GUI:
     def __init__(self, twitter):
@@ -99,6 +116,7 @@ class GUI:
         for x in range(amount/5):
             for message in self.streaming_messages:
                 message.move_down(5)
+                message.set_colour(0, 256*((768 - message.posy)/512.0), 0)
                 if message.posy > 768:
                     self.canvas.delete(message.text)
                     self.streaming_messages.remove(message)
