@@ -56,19 +56,23 @@ class GUI:
         self.username_entry = Tkinter.Entry(self.auth_frame)
         self.password_label = Tkinter.Label(self.auth_frame, text="Password:")
         self.password_entry = Tkinter.Entry(self.auth_frame, show="*")
+        self.topic_label = Tkinter.Label(self.auth_frame, text="Topics (otherwise, trending)")
+        self.topic_entry = Tkinter.Entry(self.auth_frame)
         self.login_button = Tkinter.Button(self.auth_frame, text="Login",
             command=self.process_auth)
         if error != '':
             self.error_msg = Tkinter.Label(self.auth_frame, text=error,
                 fg = "red")
-            self.error_msg.grid(row=4, columnspan=2, sticky=Tkinter.N)
+            self.error_msg.grid(row=5, columnspan=2, sticky=Tkinter.N)
         
         self.auth_label.grid(row=0, column=0, columnspan=2, sticky=Tkinter.W)
         self.username_label.grid(row=1, column=0, sticky=Tkinter.W)
         self.username_entry.grid(row=1, column=1, sticky=Tkinter.W)
         self.password_label.grid(row=2, column=0, sticky=Tkinter.W)
         self.password_entry.grid(row=2, column=1, sticky=Tkinter.W)
-        self.login_button.grid(row=3, columnspan=2, sticky=Tkinter.N)
+        self.topic_label.grid(row=3, column=0, sticky=Tkinter.W)
+        self.topic_entry.grid(row=3, column=1, sticky=Tkinter.W)
+        self.login_button.grid(row=4, columnspan=2, sticky=Tkinter.N)
         
         self.username_entry.bind('<Return>',
             lambda event: self.login_button.invoke())
@@ -82,15 +86,17 @@ class GUI:
         '''Get the entered username and password and use them'''
         username = self.username_entry.get()
         password = self.password_entry.get()
+        topic = self.topic_entry.get()
         self.auth_frame.destroy()
         
         if self.twitter.check_credentials(username, password):
             self.twitter.sock_cond.acquire()
+            self.twitter.get_trends(topic)
             self.twitter.open_socket(username, password)
             self.twitter.sock_cond.notify()
             self.twitter.sock_cond.release()
             
-            trend_string = "Trending Topics: "
+            trend_string = "Topics: "
             for trend in self.twitter.trends:
                 trend_string += "%s, " % trend
             trend_string = trend_string[:-2]

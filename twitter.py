@@ -15,18 +15,21 @@ class Twitter:
         self.tweets = Queue.Queue()
         self.sock_cond = threading.Condition()
     
-    def get_trends(self):
+    def get_trends(self, topic=''):
         '''Fetch the current trends from Twitter'''
-        try:
-            f = urllib2.urlopen("http://search.twitter.com/trends.json")
-            json = simplejson.loads(f.read())
-        except (ValueError, urllib2.URLError, TypeError):
-            print "Error getting current Twitter trends, retrying..."
-            self.get_trends()
+        if topic == '':
+            try:
+                f = urllib2.urlopen("http://search.twitter.com/trends.json")
+                json = simplejson.loads(f.read())
+            except (ValueError, urllib2.URLError, TypeError):
+                print "Error getting current Twitter trends, retrying..."
+                self.get_trends()
+            else:
+                self.trends = []
+                for trend in json['trends']:
+                    self.trends.append(trend['name'])
         else:
-            self.trends = []
-            for trend in json['trends']:
-                self.trends.append(trend['name'])
+            self.trends = [topic]
     
     def check_credentials(self, username, password):
         auth_handler = urllib2.HTTPBasicAuthHandler()
