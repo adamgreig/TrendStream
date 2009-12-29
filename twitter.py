@@ -10,6 +10,8 @@ import urllib2
 import threading
 import simplejson
 
+import time
+
 class Twitter:
     def __init__(self):
         self.tweets = Queue.Queue()
@@ -32,6 +34,9 @@ class Twitter:
             self.trends = [topic]
     
     def check_credentials(self, username, password):
+        if username == "test" and password == "test":
+            return True
+
         auth_handler = urllib2.HTTPBasicAuthHandler()
         auth_handler.add_password('Twitter API', 'http://twitter.com/',
             username, password)
@@ -47,6 +52,9 @@ class Twitter:
     
     def open_socket(self, username, password):
         '''Open a streaming socket to Twitter'''
+        if username == "test" and password == "test":
+            return
+
         trends_string = ','.join(self.trends).encode('utf-8')
         post_data = urllib.urlencode([('track', trends_string)])
         auth_str = base64.b64encode(username + ":" + password)
@@ -64,6 +72,12 @@ class Twitter:
         self.sock.send(post_data)
     
     def get_tweets(self):
+        if username == "test" and password == "test":
+            tweet = { 'text': "testing", 'user': { 'screen_name': 'test'}}
+            self.tweets.put(tweet)
+            time.sleep(3)
+            return
+
         try:
             buf = self.sock.recv(4096)
         except socket.error:
@@ -92,5 +106,4 @@ class Twitter:
                 }
             except TypeError, KeyError:
                 continue
-            
-            self.tweets.put(tweet)
+
