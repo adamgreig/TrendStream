@@ -35,7 +35,10 @@ class Twitter:
     
     def check_credentials(self, username, password):
         if username == "test" and password == "test":
+            self.testing = True
             return True
+        else:
+            self.testing = False
 
         auth_handler = urllib2.HTTPBasicAuthHandler()
         auth_handler.add_password('Twitter API', 'http://twitter.com/',
@@ -52,7 +55,7 @@ class Twitter:
     
     def open_socket(self, username, password):
         '''Open a streaming socket to Twitter'''
-        if username == "test" and password == "test":
+        if self.testing:
             return
 
         trends_string = ','.join(self.trends).encode('utf-8')
@@ -72,7 +75,7 @@ class Twitter:
         self.sock.send(post_data)
     
     def get_tweets(self):
-        if username == "test" and password == "test":
+        if self.testing: 
             tweet = { 'text': "testing", 'user': { 'screen_name': 'test'}}
             self.tweets.put(tweet)
             time.sleep(3)
