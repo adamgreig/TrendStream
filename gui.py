@@ -78,6 +78,8 @@ class GUI:
             lambda event: self.login_button.invoke())
         self.password_entry.bind('<Return>',
             lambda event: self.login_button.invoke())
+        self.topic_entry.bind('<Return>',
+            lambda event: self.login_button.invoke())
         
         self.auth_frame.pack()
         self.username_entry.focus()

@@ -8,6 +8,7 @@ import threading
 
 import gui
 import twitter
+import blinken
 
 class GUIThread(threading.Thread):
     def __init__(self, twitter):
@@ -19,10 +20,19 @@ class GUIThread(threading.Thread):
         self.gui.ask_auth()
         self.gui.root.mainloop()
 
+class BlinkenThread(threading.Thread):
+    def __init__(self, twitter):
+        self.twitter = twitter
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.blinken = blinken.Blinken(self.twitter)
+        while 1:
+            self.blinken.send_animation()
+
 class TwitterThread(threading.Thread):
     def __init__(self, twitter):
         self.twitter = twitter
-        #self.twitter.get_trends()
         threading.Thread.__init__(self)
     
     def run(self):
@@ -37,9 +47,11 @@ if __name__ == '__main__':
     
     twitter_thread = TwitterThread(twitter)
     gui_thread = GUIThread(twitter)
+    blinken_thread = BlinkenThread(twitter)
     
     twitter_thread.start()
     gui_thread.start()
+    blinken_thread.start()
     
     gui_thread.join()
     
