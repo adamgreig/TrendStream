@@ -41,6 +41,7 @@ class Blinken:
         self.message = Message("")
         self.sock_cond = threading.Condition()
         self.twitter = twitter
+        self.ser = serial.Serial( '/dev/ttyUSB0', '57600' )
 
     def add_streaming_message(self, message):
         self.message = Message(message)
@@ -60,20 +61,27 @@ class Blinken:
 
     def send_animation_frame(self):
         self.message.x -= 1
-        print "23 54 26 66", #magic
-        print "00 08", #height 8
-        print "00 12", #width 18
-        print "00 01", #channels 1
-        print "00 01" #maxval 1
+
+        self.ser.write('\x23\x54\x26\x66')  # magic numbers
+        self.ser.write('\x00\x08')          # height 8
+        self.ser.write('\x00\x12')          # width 18
+        self.ser.write('\x00\x01')          # channels 1
+        self.ser.write('\x00\x07')          # maxval 7
 
         for row in range(8):
             for col in range(18):
                 if self.message.lit(col, row):
-                    print "O",
+                    self.ser.write('\x07')
+                    if self.testing:
+                        print "O",
                 else:
-                    print " ",
-            print
+                    self.ser.write('\x00')
+                    if self.testing:
+                        print " ",
+            if self.testing:
+                print
 
-        print
-        print
+        if self.testing:
+            print
+            print
 
