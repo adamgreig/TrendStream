@@ -49,7 +49,8 @@ class Blinken:
     def check_twitter(self):
         while not self.twitter.tweets.empty():
             tweet = self.twitter.tweets.get(False)
-            text = " " + tweet['user']['screen_name'] + ':' + tweet['text'] + "   "
+            text = " " + tweet['user']['screen_name'] +
+                ':' + tweet['text'] + "   "
             self.add_streaming_message(text)
 
     def send_animation(self):
